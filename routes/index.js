@@ -131,7 +131,8 @@ router.get('/', async (req, res) => {
     const db = client.db(dbName);
     const collection = db.collection('image');
     await collection.find({}).toArray((err, docs) => {
-      res.render("login", { allPath: docs });
+//      res.render("login", { allPath: docs });
+      res.render("layouteditor");
     });
   } catch (error) {
     console.log(error);

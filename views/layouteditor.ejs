@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>title</title>
+    <style>
+        article {
+            width: 100%;
+            display: flex;
+        }
+        .element {
+            width: 100px;
+            height: 50px;
+            background: #ff8888;
+        }
+        .droppable {
+            margin: 10px;
+            padding: 0px 50px 20px 50px;
+            width: 100px;
+            background: #88ff88;
+        }
+        .reserver {
+            margin: 20px;
+            padding: 0px 50px 20px 50px;
+            background: #aaaaaa;
+        }
+        .editarea_sp {
+            margin: 20px;
+            padding: 0px 50px 50px 50px;
+            background: #aaaaaa;
+        }
+        .editarea_tab {
+            margin: 20px;
+            padding: 0px 150px 50px 150px;
+            background: #aaaaaa;
+        }
+        .editarea_pc {
+            margin: 20px;
+            padding: 0px 350px 50px 350px;
+            background: #aaaaaa;
+        }
+        
+    </style>
+  </head>
+  <body>
+    <h1>layout editor</h1>
+    <h2>contentをレイアウトにドラッグ＆ドロップしてください。</h2>
+    <script>
+        function dragstart_handler(ev) {
+         // 対象となる要素の id を DataTransfer オブジェクトに追加する
+         ev.dataTransfer.setData("application/my-app", ev.target.id);
+         ev.dataTransfer.dropEffect = "move";
+        }
+        function dragover_handler(ev) {
+         ev.preventDefault();
+         ev.dataTransfer.dropEffect = "move"
+        }
+        function drop_handler(ev) {
+         ev.preventDefault();
+         // 移動された要素の id を取得して、その要素を target の DOM に追加する
+         const data = ev.dataTransfer.getData("application/my-app");
+         ev.target.appendChild(document.getElementById(data));
+        }
+    </script>
+    <article>
+      <div class="reserver">
+        <h2>コンテンツ要素</h2>
+        <div class="droppable" id="target1" ondrop="drop_handler(event)" ondragover="dragover_handler(event)">reserve
+            <p class="element" id="p1" draggable="true" ondragstart="dragstart_handler(event)">content001</p>
+        </div>
+        <div class="droppable" id="target2" ondrop="drop_handler(event)" ondragover="dragover_handler(event)">reserve
+            <p class="element" id="p2" draggable="true" ondragstart="dragstart_handler(event)">content002</p>
+        </div>
+        <div class="droppable" id="target3" ondrop="drop_handler(event)" ondragover="dragover_handler(event)">reserve
+            <p class="element" id="p3" draggable="true" ondragstart="dragstart_handler(event)">content003</p>
+        </div>
+        <div class="droppable" id="target4" ondrop="drop_handler(event)" ondragover="dragover_handler(event)">reserve
+            <p class="element" id="p4" draggable="true" ondragstart="dragstart_handler(event)">content004</p>
+        </div>
+      </div>
+      <div class="editarea_sp">
+        <h2>スマホ<br>レイアウト編集</h2>
+        <div class="droppable" id="target5" ondrop="drop_handler(event)" ondragover="dragover_handler(event)">Main Visual</div>
+        <div class="droppable" id="target6" ondrop="drop_handler(event)" ondragover="dragover_handler(event)">Suggest</div>
+        <div class="droppable" id="target7" ondrop="drop_handler(event)" ondragover="dragover_handler(event)">Ranking</div>
+        <div class="droppable" id="target8" ondrop="drop_handler(event)" ondragover="dragover_handler(event)">List</div>
+      </div>
+      <div class="editarea_tab">
+        <h2>タブレット<br>レイアウト編集</h2>
+        <div class="droppable" id="target5" ondrop="drop_handler(event)" ondragover="dragover_handler(event)">Main Visual</div>
+        <div class="droppable" id="target6" ondrop="drop_handler(event)" ondragover="dragover_handler(event)">Suggest</div>
+        <div class="droppable" id="target7" ondrop="drop_handler(event)" ondragover="dragover_handler(event)">Ranking</div>
+        <div class="droppable" id="target8" ondrop="drop_handler(event)" ondragover="dragover_handler(event)">List</div>
+      </div>
+      <div class="editarea_pc">
+        <h2>PC<br>レイアウト編集</h2>
+        <div class="droppable" id="target5" ondrop="drop_handler(event)" ondragover="dragover_handler(event)">Main Visual</div>
+        <div class="droppable" id="target6" ondrop="drop_handler(event)" ondragover="dragover_handler(event)">Suggest</div>
+        <div class="droppable" id="target7" ondrop="drop_handler(event)" ondragover="dragover_handler(event)">Ranking</div>
+        <div class="droppable" id="target8" ondrop="drop_handler(event)" ondragover="dragover_handler(event)">List</div>
+      </div>
+    </article>        
+  </body>
+</html>
