@@ -131,8 +131,8 @@ router.get('/', async (req, res) => {
     const db = client.db(dbName);
     const collection = db.collection('image');
     await collection.find({}).toArray((err, docs) => {
-//      res.render("login", { allPath: docs });
-      res.render("layouteditor");
+      res.render("login", { allPath: docs });
+ //      res.render("layouteditor");
     });
   } catch (error) {
     console.log(error);
@@ -197,6 +197,27 @@ router.post('/', (req, res) => {
 
 });
 
+router.get('/images', async (req, res) => {
+  let client;
+  try {
+    client = await MongoClient.connect(url, connectOption);
+    const db = client.db(dbName);
+    const collection = db.collection('image');
+    await collection.find({}).toArray((err, docs) => {
+      res.json({ allPath: docs });
+    });
+  } catch (error) {
+    console.log(error);
+    res.send(error);
+  }
+});
 
+router.get('*',function(req,res,next){
+  if(req.headers['x-forwarded-proto']!='https') {
+    res.redirect('https://bigaru.com'+req.url);
+  } else {
+    next(); /* Continue to other routes if we're not redirecting */
+  }
+});
 
 module.exports = router;

@@ -7,27 +7,46 @@
 var app = require('../app');
 var debug = require('debug')('ejs-project:server');
 var http = require('http');
-
+var https = require('https');
+var fs = require('fs');
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || '443');
 app.set('port', port);
 
+
+
+var options = {
+  key: fs.readFileSync(__dirname + '/servername.key'),
+  cert: fs.readFileSync(__dirname + '/server.crt'),
+  passphrase: 'primitive1A'
+};
 /**
  * Create HTTP server.
  */
+//app.get('*',function(req,res,next){
+//  if(req.headers['x-forwarded-proto']!='https') {
+//    res.redirect('https://bigaru.com'+req.url);
+//  } else {
+//    next(); /* Continue to other routes if we're not redirecting */
+//  }
+//});
+//http.createServer((app).all("*", function (request, response) {
+//    response.redirect(`https://${request.hostname}${request.url}`);
+//})).listen(80);
 
-var server = http.createServer(app);
+var server = https.createServer(options, app);
+server.listen(port);
 
 /**
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+//server.listen(port);
+//server.on('error', onError);
+//server.on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.
