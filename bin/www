@@ -38,6 +38,16 @@ var options = {
 //})).listen(80);
 
 var server = https.createServer(options, app);
+
+
+const { Server } = require("socket.io");
+const io = new Server(server);
+
+io.on('connection', (socket) => {
+  console.log('a user connected');
+});
+
+
 server.listen(port);
 
 /**
