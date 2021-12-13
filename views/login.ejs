@@ -2,11 +2,11 @@
 <head>
     <title>login</title>
     <script src="/socket.io/socket.io.js"></script>
-    <script>
-      var socket = io();
-    </script>
+    <script src="javascripts/game.js"></script>
 </head>
 <body style="width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+  <canvas style="width:640px; height:480px;" id="canvas"></canvas>
+<!--
     <div style="display: flex;">
     <% allPath.forEach(function(value, key){ %>
         <p> <%= value.name %>: <img src="/images/<%= value.path %>" > </p>
@@ -28,5 +28,6 @@
     </form>
     <br>
     <a href="signup">sign up</a>
+-->
 </body>
 </html>

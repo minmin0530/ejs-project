@@ -131,8 +131,9 @@ router.get('/', async (req, res) => {
     const db = client.db(dbName);
     const collection = db.collection('image');
     await collection.find({}).toArray((err, docs) => {
-      res.render("login", { allPath: docs });
+       res.render("login", { allPath: docs });
  //      res.render("layouteditor");
+ //      res.render("game");
     });
   } catch (error) {
     console.log(error);
@@ -212,12 +213,12 @@ router.get('/images', async (req, res) => {
   }
 });
 
-router.get('*',function(req,res,next){
-  if(req.headers['x-forwarded-proto']!='https') {
-    res.redirect('https://bigaru.com'+req.url);
-  } else {
-    next(); /* Continue to other routes if we're not redirecting */
-  }
-});
+//router.get('*',function(req,res,next){
+//  if(req.headers['x-forwarded-proto']!='https') {
+//    res.redirect('https://bigaru.com'+req.url);
+//  } else {
+//    next(); /* Continue to other routes if we're not redirecting */
+//  }
+//});
 
 module.exports = router;

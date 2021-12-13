@@ -41,12 +41,45 @@ var server = https.createServer(options, app);
 
 
 const { Server } = require("socket.io");
-const io = new Server(server);
-
+const io = new Server(server, {allowEIO3: true});
+var dragData = [];
 io.on('connection', (socket) => {
-  console.log('a user connected');
-});
+    console.log('a user connected');
+    let userid = Math.floor(Math.random() * 100000);
+    const userData = {
+      id: userid,
+      x: Math.floor(Math.random() * 640),
+      y: Math.floor(Math.random() * 480),
+      r: Math.floor(Math.random() * 256),
+      g: Math.floor(Math.random() * 256),
+      b: Math.floor(Math.random() * 256)
+    };
+    dragData.push(userData);
+    io.to(socket.id).emit("userdata", userData);
 
+    socket.on('disconnect', function() {
+        console.log("client disconnected!!")
+    });
+    socket.on("from_client", function(obj){
+        console.log(obj)
+    });
+    socket.on("drag", (data) => {
+      for (let l = 0; l < dragData.length; ++l) {
+        if (dragData[l].id == data.id) {
+          dragData[l] = data;
+          break;
+        }
+      }
+      io.emit("drag", dragData);
+    });
+});
+var send_servertime = function() {
+    var now = new Date();
+    io.emit("from_server", now.toLocaleString());
+    console.log(now.toLocaleString());
+    setTimeout(send_servertime, 1000)
+};
+//send_servertime();
 
 server.listen(port);
 
