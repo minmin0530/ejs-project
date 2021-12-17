@@ -37,12 +37,31 @@ var options = {
 //    response.redirect(`https://${request.hostname}${request.url}`);
 //})).listen(80);
 
+var mapData = [];
+var mapId = 0;
+var createMap = function() {
+  for (let l = 0; l < 20; ++l) {
+    const map = {
+      mapid: mapId,
+      x: Math.floor(Math.random() * 280),
+      y: Math.floor(Math.random() * 160),
+      r: 255,
+      g: 255,
+      b: 255
+    };
+    ++mapId;
+    mapData.push(map);
+  }
+};
+createMap();
+
 var server = https.createServer(options, app);
 
 
 const { Server } = require("socket.io");
 const io = new Server(server, {allowEIO3: true});
 var dragData = [];
+var dragStartData = [];
 io.on('connection', (socket) => {
     console.log('a user connected');
     let userid = Math.floor(Math.random() * 100000);
@@ -55,7 +74,9 @@ io.on('connection', (socket) => {
       b: Math.floor(Math.random() * 256)
     };
     dragData.push(userData);
+    dragStartData.push(userData);
     io.to(socket.id).emit("userdata", userData);
+    io.to(socket.id).emit("mapdata", mapData);
 
     socket.on('disconnect', function() {
         console.log("client disconnected!!")
@@ -63,6 +84,16 @@ io.on('connection', (socket) => {
     socket.on("from_client", function(obj){
         console.log(obj)
     });
+    socket.on("dragStart", (data) => {
+      for (let l = 0; l < dragStartData.length; ++l) {
+        if (dragStartData[l].id == data.id) {
+          dragStartData[l] = data;
+          break;
+        }
+      }
+      io.emit("dragStart", dragStartData);
+    });
+
     socket.on("drag", (data) => {
       for (let l = 0; l < dragData.length; ++l) {
         if (dragData[l].id == data.id) {
