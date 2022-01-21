@@ -13,16 +13,16 @@ var fs = require('fs');
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '443');
+var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 
 
-var options = {
-  key: fs.readFileSync(__dirname + '/servername.key'),
-  cert: fs.readFileSync(__dirname + '/server.crt'),
-  passphrase: 'primitive1A'
-};
+// var options = {
+//   key: fs.readFileSync(__dirname + '/servername.key'),
+//   cert: fs.readFileSync(__dirname + '/server.crt'),
+//   passphrase: 'primitive1A'
+// };
 /**
  * Create HTTP server.
  */
@@ -37,25 +37,38 @@ var options = {
 //    response.redirect(`https://${request.hostname}${request.url}`);
 //})).listen(80);
 
+var area = {
+  id: 0,
+  x: 0,
+  y: 0,
+  r: 0,
+  g: 0,
+  b: 0,
+  time: 0
+};
+
 var mapData = [];
 var mapId = 0;
 var createMap = function() {
-  for (let l = 0; l < 30; ++l) {
-    const map = {
+  for (let l = 0; l < 8; ++l) {
+    for (let m = 0; m < 8; ++m) {
+      const map = {
       mapid: mapId,
-      x: Math.floor(Math.random() * 280),
-      y: Math.floor(Math.random() * 160),
+      x: Math.floor(l * 32 * 2),
+      y: Math.floor(m * 32 * 2),
+      n: 0,
       r: 255,
       g: 255,
       b: 255
     };
     ++mapId;
     mapData.push(map);
+    }
   }
 };
 createMap();
 
-var server = https.createServer(options, app);
+var server = http.createServer(app);
 
 
 const { Server } = require("socket.io");
@@ -67,8 +80,9 @@ io.on('connection', (socket) => {
     let userid = Math.floor(Math.random() * 100000);
     const userData = {
       id: userid,
-      x: Math.floor(Math.random() * 640),
-      y: Math.floor(Math.random() * 480),
+      x: Math.floor(Math.random() * 8) * 32 * 2 + 16,
+      y: Math.floor(Math.random() * 8) * 32 * 2 + 16,
+      n: 1,
       r: Math.floor(Math.random() * 256),
       g: Math.floor(Math.random() * 256),
       b: Math.floor(Math.random() * 256)
@@ -77,16 +91,16 @@ io.on('connection', (socket) => {
     dragStartData.push(userData);
 
 
-    const map = {
-      mapid: mapId,
-      x: Math.floor(Math.random() * 280),
-      y: Math.floor(Math.random() * 160),
-      r: userData.r,
-      g: userData.g,
-      b: userData.b
-    };
+    // const map = {
+    //   mapid: mapId,
+    //   x: Math.floor(Math.random() * 608),
+    //   y: Math.floor(Math.random() * 608),
+    //   r: userData.r,
+    //   g: userData.g,
+    //   b: userData.b
+    // };
     ++mapId;
-    mapData.push(map);
+    // mapData.push(map);
 
 
     io.to(socket.id).emit("userdata", userData);
@@ -101,6 +115,7 @@ io.on('connection', (socket) => {
     socket.on("dragStart", (data) => {
       for (let l = 0; l < dragStartData.length; ++l) {
         if (dragStartData[l].id == data.id) {
+          data.n = dragStartData[l].n;
           dragStartData[l] = data;
           break;
         }
@@ -111,20 +126,49 @@ io.on('connection', (socket) => {
     socket.on("drag", (data) => {
       for (let l = 0; l < dragData.length; ++l) {
         if (dragData[l].id == data.id) {
+          data.n = dragData[l].n;
           dragData[l] = data;
           break;
         }
       }
       io.emit("drag", dragData);
     });
+
+    socket.on("dragEnd", (data) => {
+      for (let l = 0; l < dragData.length; ++l) {
+        if (dragData[l].id == data.id) {
+          data.n = dragData[l].n;
+          dragData[l] = data;
+          for (let m = 0; m < mapData.length; ++m) {
+            if (mapData[m].x == data.x - 16 && mapData[m].y == data.y - 16) {
+              mapData[m].n = data.n;
+              mapData[m].r = data.r;
+              mapData[m].g = data.g;
+              mapData[m].b = data.b;
+            }
+          }
+          break;
+        }
+      }
+      io.emit("dragEnd", {dragData: dragData, mapData: mapData});
+    });
+
+
 });
 var send_servertime = function() {
-    var now = new Date();
-    io.emit("from_server", now.toLocaleString());
-    console.log(now.toLocaleString());
+  for (let m = 0; m < mapData.length; ++m) {
+    if (!(mapData[m].r == 255 && mapData[m].g == 255 && mapData[m].b == 255)) {
+      mapData[m].n += 1;
+    }
+  } 
+  io.emit("update", {mapData: mapData});
+
+    // var now = new Date();
+    // io.emit("from_server", now.toLocaleString());
+    // console.log(now.toLocaleString());
     setTimeout(send_servertime, 1000)
 };
-//send_servertime();
+send_servertime();
 
 server.listen(port);
 
