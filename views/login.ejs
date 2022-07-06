@@ -5,8 +5,8 @@
     <script src="javascripts/game.js"></script>
 </head>
 <body style="width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-  <canvas width="640px" height="640px;" id="canvas"></canvas>
-<!--
+<!--  <canvas width="640px" height="640px;" id="canvas"></canvas>
+-->
     <div style="display: flex;">
     <% allPath.forEach(function(value, key){ %>
         <p> <%= value.name %>: <img src="/images/<%= value.path %>" > </p>
@@ -28,6 +28,5 @@
     </form>
     <br>
     <a href="signup">sign up</a>
--->
 </body>
 </html>

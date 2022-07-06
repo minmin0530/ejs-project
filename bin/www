@@ -13,16 +13,16 @@ var fs = require('fs');
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || '443');
 app.set('port', port);
 
 
 
-// var options = {
-//   key: fs.readFileSync(__dirname + '/servername.key'),
-//   cert: fs.readFileSync(__dirname + '/server.crt'),
-//   passphrase: 'primitive1A'
-// };
+var options = {
+   key: fs.readFileSync(__dirname + '/servername.key'),
+   cert: fs.readFileSync(__dirname + '/server.crt'),
+   passphrase: 'primitive1A'
+};
 /**
  * Create HTTP server.
  */
@@ -68,7 +68,7 @@ var createMap = function() {
 };
 createMap();
 
-var server = http.createServer(app);
+var server = https.createServer(options, app);
 
 
 const { Server } = require("socket.io");

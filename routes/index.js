@@ -1,3 +1,4 @@
+const fs = require('fs');
 const express = require('express');
 const router = express.Router();
 const {v4: uuidv4} = require('uuid');
@@ -21,13 +22,13 @@ const storage = multer.diskStorage({
 
     currentUUID = uuid;
     let data = {
-      path: uuid + ".jpg",
+      path: uuid + ".gltf",
       mail: req.session.mail,
       name: req.session.name
     };
     transactionImagePathInsert(data);
 
-    cb(null, uuid + '.jpg')
+    cb(null, uuid + '.gltf')
   }
 })
 
@@ -220,5 +221,54 @@ router.get('/images', async (req, res) => {
 //    next(); /* Continue to other routes if we're not redirecting */
 //  }
 //});
+
+var isSecond = 0;
+function second() {
+  isSecond += 1;
+  if (isSecond >= 3) {
+    isSecond = 0;
+  }
+}
+router.get('/img', (req, res) => {
+  if (isSecond == 0) {
+  fs.readFile(__dirname + "/../public/images/a3593081-327d-40b2-9aeb-dce426ee91df.jpg", (err, data) => {
+    res.type('jpg');
+    res.send(data);
+//    res.json(data);
+  });
+  } else if (isSecond == 1) {
+  fs.readFile(__dirname + "/../public/images/973ac5bb-bbbe-4e46-8d18-f9c9cb1a371e.jpg", (err, data) => {
+    res.type('jpg');
+    res.send(data);
+//    res.json(data);
+  });
+  } else if (isSecond == 2) {
+  fs.readFile(__dirname + "/../public/images/ae9f59f4-d449-423c-bd68-4ef988039bec.jpg", (err, data) => {
+    res.type('jpg');
+    res.send(data);
+//    res.json(data);
+  });
+  }
+});
+
+router.get("/swimg", (req, res) => {
+  res.render("swimg");
+});
+router.get("/manifest.json", (req, res) => {
+  res.sendFile(__dirname + "/../public/manifest.json");
+});
+router.get("/css/style.css", (req, res) => {
+  res.sendFile(__dirname + "/../public/css/style.css");
+});
+router.get("/app.js", (req, res) => {
+  res.sendFile(__dirname + "/../public/app.js");
+});
+router.get("/sw.js", (req, res) => {
+  res.sendFile(__dirname + "/../public/sw.js");
+});
+router.get("/favicon.ico", (req, res) => {
+  res.sendFile(__dirname + "/../public/favicon.ico");
+});
+setInterval(second, 1000 * 30);
 
 module.exports = router;
